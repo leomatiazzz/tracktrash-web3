@@ -84,8 +84,8 @@ O **TrackTrash** resolve isso criando um loop econômico on-chain:
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/tracktrash.git
-cd tracktrash
+git clone https://github.com/leomatiazzz/tracktrash-web3.git
+cd tracktrash-web3
 
 # Instale as dependências do protocolo (raiz)
 npm install
