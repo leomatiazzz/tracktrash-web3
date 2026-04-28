@@ -1,0 +1,262 @@
+# TrackTrash — Smart Reverse Logistics
+
+> **Protocolo Web3 de Logística Reversa com incentivos financeiros on-chain, rastreabilidade em NFTs e governança descentralizada.**
+
+---
+
+## O Problema que Resolvemos
+
+A cadeia de devolução de embalagens e produtos pós-consumo sofre de três falhas estruturais:
+
+| Problema | Impacto |
+|---|---|
+| **Falta de incentivo financeiro** | Consumidores não têm motivo concreto para devolver embalagens ou itens recicláveis |
+| **Opacidade logística** | Empresas e auditores não conseguem rastrear devoluções de forma imutável |
+| **Ausência de governança** | Regras do programa de reciclagem são definidas de forma centralizada, sem participação dos stakeholders |
+
+O **TrackTrash** resolve isso criando um loop econômico on-chain:
+
+1. O consumidor registra a devolução → paga uma taxa em ETH → recebe **EcoTokens** como recompensa.
+2. Cada devolução gera um **EcoBadge NFT** com metadados imutáveis (tipo de conquista, score de impacto, URI IPFS).
+3. Detentores de EcoTokens participam da **EcoDAO** para votar em propostas de governança.
+4. Tokens podem ser **stakados** para gerar recompensas passivas contínuas.
+
+---
+
+## Arquitetura Técnica
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      TrackTrash Protocol                │
+│                                                         │
+│  ┌────────────┐   mintBadge()   ┌────────────────────┐  │
+│  │ EcoBadge   │◄────────────────│ ReverseLogistics   │  │
+│  │ (ERC-721)  │                 │                    │  │
+│  └────────────┘                 │  • registerReturn()│  │
+│                                 │  • Chainlink feed  │  │
+│  ┌────────────┐   mint()        │  • nonReentrant    │  │
+│  │ EcoToken   │◄────────────────│  • taxa em ETH     │  │
+│  │  (ERC-20)  │                 └────────────────────┘  │
+│  └─────┬──────┘                                         │
+│        │ stake/reward          ┌────────────────────┐   │
+│        ├──────────────────────►│   EcoStaking       │   │
+│        │                       │  • stake()         │   │
+│        │ governança            │  • claimRewards()  │   │
+│        └──────────────────────►│   EcoDAO           │   │
+│                                │  • vote()          │   │
+│                                │  • executeProposal │   │
+│                                └────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Contratos
+
+| Contrato | Padrão | Responsabilidade |
+|---|---|---|
+| `EcoToken.sol` | ERC-20 + AccessControl | Token de utilidade e governança do ecossistema |
+| `EcoBadge.sol` | ERC-721 + AccessControl | NFT de comprovação de devolução com metadados on-chain |
+| `ReverseLogistics.sol` | AccessControl + ReentrancyGuard | Registro de devoluções, cobrança de taxa em ETH, disparo de recompensas |
+| `EcoStaking.sol` | AccessControl + ReentrancyGuard | Staking de EcoTokens com distribuição proporcional de recompensas |
+| `EcoDAO.sol` | AccessControl + ReentrancyGuard | Governança on-chain com quorum, período de votação e execução de propostas |
+
+### Stack Técnica
+
+- **Solidity** `^0.8.20` — contratos inteligentes
+- **Hardhat 3** — ambiente de desenvolvimento, testes e deploy
+- **TypeChain** — bindings TypeScript estritamente tipados para os contratos
+- **OpenZeppelin Contracts v5** — ERC-20, ERC-721, AccessControl, ReentrancyGuard
+- **Chainlink AggregatorV3Interface** — price feed ETH/USD on-chain para cálculo de taxa
+- **Ethers.js v6** — interação com a blockchain no frontend e nos scripts
+- **Next.js 14** — frontend React com sistema de abas (Logística / Staking / DAO)
+
+---
+
+## Pré-requisitos
+
+- **Node.js** ≥ 20 LTS
+- **npm** ≥ 10
+- **MetaMask** instalado no navegador (para o frontend)
+- Conta Alchemy ou Infura com endpoint Sepolia (para deploy em testnet)
+
+---
+
+## Instalação
+
+```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/tracktrash.git
+cd tracktrash
+
+# Instale as dependências do protocolo (raiz)
+npm install
+
+# Instale as dependências do frontend
+cd frontend && npm install && cd ..
+```
+
+### Variáveis de Ambiente
+
+Copie o arquivo de exemplo e preencha suas chaves:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` com:
+
+```dotenv
+# Endpoint RPC da Sepolia (Alchemy, Infura ou similar)
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/SUA_CHAVE
+
+# Chave privada da carteira de deploy (sem o prefixo 0x)
+PRIVATE_KEY=sua_chave_privada_aqui
+
+# Chave da API do Etherscan (para verificação de contratos)
+ETHERSCAN_API_KEY=sua_chave_etherscan_aqui
+```
+
+> ⚠️ **Nunca comite o arquivo `.env`** — ele já está no `.gitignore`.
+
+---
+
+## Compilar os Contratos
+
+```bash
+npm run build
+```
+
+Isso executa `hardhat compile` e gera os artefatos em `artifacts/` e os tipos TypeChain em `types/`.
+
+---
+
+## Testes Automatizados
+
+```bash
+npm test
+```
+
+Os testes cobrem os contratos `EcoStaking` e `ReverseLogistics` com asserções estritamente tipadas via TypeChain.
+
+---
+
+## Relatório de Auditoria (Cobertura de Testes)
+
+```bash
+npm run audit
+```
+
+Executa `hardhat test --coverage` e gera um relatório de cobertura de linhas, branches, funções e statements. O relatório HTML é salvo em `coverage/index.html`.
+
+> Este relatório serve como auditoria básica de cobertura de código para fins de entrega e revisão.
+
+---
+
+## Rodar o Nó Local
+
+```bash
+npx hardhat node
+```
+
+Sobe um nó Hardhat local em `http://127.0.0.1:8545` com 20 contas pré-financiadas.
+
+---
+
+## Deploy Local (Hardhat Node)
+
+Com o nó local rodando em outro terminal:
+
+```bash
+npm run deploy:local
+```
+
+O script gera automaticamente o arquivo `frontend/src/services/contracts.json` com endereços e ABIs dos contratos deployados.
+
+---
+
+## Deploy na Testnet Sepolia
+
+```bash
+npm run deploy:sepolia
+```
+
+Após o deploy, verifique os contratos no Etherscan:
+
+```bash
+npx hardhat verify --network sepolia <ENDERECO_DO_CONTRATO> <ARG1> <ARG2> ...
+```
+
+---
+
+## Rodar o Frontend Localmente
+
+```bash
+cd frontend
+npm run dev
+```
+
+Acesse `http://localhost:3000`. O frontend lê automaticamente os endereços de `frontend/src/services/contracts.json`.
+
+**Abas disponíveis:**
+
+| Aba | Funcionalidade |
+|---|---|
+| **Logística** | Registrar devolução de item + mint de EcoBadge NFT |
+| **Staking** | Travar EcoTokens e acumular recompensas por segundo |
+| **DAO** | Visualizar e votar em propostas de governança |
+
+---
+
+## Endereços do Deploy (Sepolia)
+
+> *A ser preenchido após o deploy na testnet.*
+
+| Contrato | Endereço |
+|---|---|
+| `EcoToken` | — |
+| `EcoBadge` | — |
+| `ReverseLogistics` | — |
+| `EcoStaking` | — |
+| `EcoDAO` | — |
+
+---
+
+## Estrutura do Repositório
+
+```
+tracktrash/
+├── contracts/              # Contratos Solidity
+│   ├── EcoToken.sol
+│   ├── EcoBadge.sol
+│   ├── ReverseLogistics.sol
+│   ├── EcoStaking.sol
+│   ├── EcoDAO.sol
+│   └── mocks/
+│       └── MockV3Aggregator.sol
+├── scripts/
+│   └── deploy.ts           # Script de deploy com TypeChain (estritamente tipado)
+├── test/
+│   ├── EcoStaking.ts
+│   └── ReverseLogistics.ts
+├── types/                  # Bindings TypeChain (gerados automaticamente)
+├── frontend/               # Next.js 14 com Tailwind CSS
+│   ├── app/
+│   │   ├── page.js         # Página principal com sistema de abas
+│   │   ├── layout.js
+│   │   └── components/
+│   │       ├── Navbar.js
+│   │       ├── Card.js
+│   │       ├── LogisticsTab.js
+│   │       ├── StakingTab.js
+│   │       └── DAOTab.js
+│   └── lib/
+│       └── Web3Service.js  # Camada de abstração Ethers.js
+├── hardhat.config.ts       # Configuração do Hardhat (Sepolia + Etherscan)
+├── package.json
+└── README.md
+```
+
+---
+
+## Licença
+
+ISC © TrackTrash Protocol
