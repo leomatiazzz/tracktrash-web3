@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Web3Service } from "../lib/Web3Service";
 import contractsData from "../src/services/contracts.json";
 
@@ -28,9 +28,26 @@ export default function HomePage() {
   const web3 = useMemo(() => new Web3Service(), []);
 
   // Wallet
-  const [wallet,  setWallet]  = useState("");
-  const [network, setNetwork] = useState(contractsData.network ?? "—");
-  const [status,  setStatus]  = useState("Pronto.");
+  const [wallet,      setWallet]      = useState("");
+  const [connecting,  setConnecting]  = useState(false);
+  const [network,     setNetwork]     = useState(contractsData.network ?? "—");
+  const [status,      setStatus]      = useState("Pronto.");
+
+  // Detecta troca de conta no MetaMask automaticamente
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.ethereum) return;
+    const handler = (accounts) => {
+      if (accounts.length === 0) {
+        setWallet("");
+        setStatus("Carteira desconectada.");
+      } else {
+        setWallet(accounts[0]);
+        setStatus("Conta alterada: " + accounts[0].slice(0, 10) + "…");
+      }
+    };
+    window.ethereum.on("accountsChanged", handler);
+    return () => window.ethereum.removeListener("accountsChanged", handler);
+  }, []);
 
   // Abas
   const [activeTab, setActiveTab] = useState("logistics");
@@ -53,12 +70,15 @@ export default function HomePage() {
   // ─── Handlers ───────────────────────────────────────────────────────────────
   async function handleConnect() {
     try {
-      setStatus("Conectando MetaMask…");
+      setConnecting(true);
+      setStatus("Aguardando autorização da carteira…");
       const address = await web3.connectWallet();
       setWallet(address);
       setStatus("Carteira conectada com sucesso.");
     } catch (err) {
       setStatus(`Erro ao conectar: ${err.message}`);
+    } finally {
+      setConnecting(false);
     }
   }
 
@@ -111,6 +131,7 @@ export default function HomePage() {
         onTabChange={setActiveTab}
         wallet={wallet}
         onConnect={handleConnect}
+        connecting={connecting}
       />
 
       {/* conteúdo deslocado para baixo da navbar fixa */}

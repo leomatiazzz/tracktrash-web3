@@ -2,4 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { AggregatorV3Interface__factory } from './AggregatorV3Interface__factory.js';
+export { IEcoBadge__factory } from './IEcoBadge__factory.js';
+export { IEcoToken__factory } from './IEcoToken__factory.js';
 export { ReverseLogistics__factory } from './ReverseLogistics__factory.js';

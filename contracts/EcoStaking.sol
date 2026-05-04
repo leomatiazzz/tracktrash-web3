@@ -5,11 +5,16 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+/// @dev Interface mínima do EcoToken expondo apenas a função de mint
+interface IEcoToken {
+    function mint(address to, uint256 amount) external;
+}
+
 contract EcoStaking is AccessControl, ReentrancyGuard {
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
-    IERC20 public immutable stakingToken;
-    IERC20 public immutable rewardToken;
+    IERC20    public immutable stakingToken; // token depositado em stake
+    IEcoToken public immutable rewardToken;  // token mintado como recompensa
 
     uint256 public rewardRatePerSecond;
     uint256 public lastRewardTime;
@@ -36,7 +41,7 @@ contract EcoStaking is AccessControl, ReentrancyGuard {
         require(rewardTokenAddress != address(0), "EcoStaking: reward token zero");
 
         stakingToken = IERC20(stakingTokenAddress);
-        rewardToken = IERC20(rewardTokenAddress);
+        rewardToken  = IEcoToken(rewardTokenAddress);
         rewardRatePerSecond = rewardRatePerSecond_;
         lastRewardTime = block.timestamp;
 
@@ -82,8 +87,9 @@ contract EcoStaking is AccessControl, ReentrancyGuard {
         pendingRewards[msg.sender] = 0;
         rewardDebt[msg.sender] = (stakedBalance[msg.sender] * accRewardPerShare) / 1e12;
 
-        bool ok = rewardToken.transfer(msg.sender, reward);
-        require(ok, "EcoStaking: reward transfer fail");
+        // Minta recompensas diretamente para o usuário.
+        // Requer que este contrato tenha MINTER_ROLE no EcoToken.
+        rewardToken.mint(msg.sender, reward);
         emit RewardsClaimed(msg.sender, reward);
     }
 

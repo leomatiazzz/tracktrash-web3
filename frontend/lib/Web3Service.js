@@ -25,16 +25,29 @@ export class Web3Service {
     this.signer = null;
   }
 
+  /**
+   * Dispara o popup de conexão da carteira (MetaMask, Rabby, Coinbase Wallet, etc.)
+   * usando a API EIP-1193 nativa — compatível com qualquer extensão de carteira.
+   * Retorna o endereço da conta selecionada.
+   */
   async connectWallet() {
     if (typeof window === "undefined" || !window.ethereum) {
-      throw new Error("MetaMask nao encontrado no navegador.");
+      throw new Error(
+        "Nenhuma carteira Web3 encontrada. Instale MetaMask ou outra extensão compatível."
+      );
+    }
+
+    // eth_requestAccounts dispara o popup de login/seleção de conta
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    if (!accounts || accounts.length === 0) {
+      throw new Error("Nenhuma conta autorizada pelo usuário.");
     }
 
     this.provider = new BrowserProvider(window.ethereum);
-    await this.provider.send("eth_requestAccounts", []);
-    this.signer = await this.provider.getSigner();
+    this.signer   = await this.provider.getSigner();
 
-    return this.signer.address;
+    return accounts[0];
   }
 
   ensureSigner() {
@@ -53,33 +66,25 @@ export class Web3Service {
   }) {
     this.ensureSigner();
     const reverseLogisticsConfig = getContractConfig("ReverseLogistics");
-    const ecoBadgeConfig = getContractConfig("EcoBadge");
 
     const reverseLogistics = new Contract(
       reverseLogisticsConfig.address,
       reverseLogisticsConfig.abi,
       this.signer
     );
-    const ecoBadge = new Contract(ecoBadgeConfig.address, ecoBadgeConfig.abi, this.signer);
 
-    const returnTx = await reverseLogistics.registerReturn(itemId, quantity, metadataURI, {
-      value: parseEther(feeInEth)
-    });
-    const returnReceipt = await returnTx.wait();
-
-    const userAddress = await this.signer.getAddress();
-    const mintTx = await ecoBadge.mintBadge(
-      userAddress,
+    // Uma única transação: registerReturn agora minta ECO + EcoBadge internamente
+    const tx = await reverseLogistics.registerReturn(
+      itemId,
+      quantity,
+      metadataURI,
       achievementType,
       BigInt(impactScore),
-      metadataURI
+      { value: parseEther(feeInEth) }
     );
-    const mintReceipt = await mintTx.wait();
+    const receipt = await tx.wait();
 
-    return {
-      returnTxHash: returnReceipt.hash,
-      mintTxHash: mintReceipt.hash
-    };
+    return { returnTxHash: receipt.hash };
   }
 
   async stakeEcoTokens(amountWei) {

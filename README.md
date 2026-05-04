@@ -4,7 +4,7 @@
 
 ---
 
-## O Problema que Resolvemos
+## O problema que resolvemos
 
 A cadeia de devolução de embalagens e produtos pós-consumo sofre de três falhas estruturais:
 
@@ -23,7 +23,7 @@ O **TrackTrash** resolve isso criando um loop econômico on-chain:
 
 ---
 
-## Arquitetura Técnica
+## Arquitetura técnica
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -59,7 +59,7 @@ O **TrackTrash** resolve isso criando um loop econômico on-chain:
 | `EcoStaking.sol` | AccessControl + ReentrancyGuard | Staking de EcoTokens com distribuição proporcional de recompensas |
 | `EcoDAO.sol` | AccessControl + ReentrancyGuard | Governança on-chain com quorum, período de votação e execução de propostas |
 
-### Stack Técnica
+### Stack técnica
 
 - **Solidity** `^0.8.20` — contratos inteligentes
 - **Hardhat 3** — ambiente de desenvolvimento, testes e deploy
@@ -94,7 +94,7 @@ npm install
 cd frontend && npm install && cd ..
 ```
 
-### Variáveis de Ambiente
+### Variáveis de ambiente
 
 Copie o arquivo de exemplo e preencha suas chaves:
 
@@ -119,7 +119,7 @@ ETHERSCAN_API_KEY=sua_chave_etherscan_aqui
 
 ---
 
-## Compilar os Contratos
+## Compilação de contratos
 
 ```bash
 npm run build
@@ -129,7 +129,7 @@ Isso executa `hardhat compile` e gera os artefatos em `artifacts/` e os tipos Ty
 
 ---
 
-## Testes Automatizados
+## Testes automatizados
 
 ```bash
 npm test
@@ -139,7 +139,7 @@ Os testes cobrem os contratos `EcoStaking` e `ReverseLogistics` com asserções 
 
 ---
 
-## Relatório de Auditoria (Cobertura de Testes)
+## Relatório de auditoria (cobertura de testes)
 
 ```bash
 npm run audit
@@ -151,7 +151,7 @@ Executa `hardhat test --coverage` e gera um relatório de cobertura de linhas, b
 
 ---
 
-## Rodar o Nó Local
+## Rodar o nó local
 
 ```bash
 npx hardhat node
@@ -161,7 +161,7 @@ Sobe um nó Hardhat local em `http://127.0.0.1:8545` com 20 contas pré-financia
 
 ---
 
-## Deploy Local (Hardhat Node)
+## Deploy local (Hardhat Node)
 
 Com o nó local rodando em outro terminal:
 
@@ -173,7 +173,7 @@ O script gera automaticamente o arquivo `frontend/src/services/contracts.json` c
 
 ---
 
-## Deploy na Testnet Sepolia
+## Deploy na testnet Sepolia
 
 ```bash
 npm run deploy:sepolia
@@ -187,7 +187,7 @@ npx hardhat verify --network sepolia <ENDERECO_DO_CONTRATO> <ARG1> <ARG2> ...
 
 ---
 
-## Rodar o Frontend Localmente
+## Rodar o frontend localmente
 
 ```bash
 cd frontend
@@ -206,21 +206,23 @@ Acesse `http://localhost:3000`. O frontend lê automaticamente os endereços de 
 
 ---
 
-## Endereços do Deploy (Sepolia)
+## Endereços do deploy (Sepolia)
 
-> *A ser preenchido após o deploy na testnet.*
+> Redeploy realizado com o padrão **mint-on-demand** — contratos com `MINTER_ROLE` concedem tokens diretamente aos usuários, sem pool pré-financiado.
 
 | Contrato | Endereço |
 |---|---|
-| `EcoToken` | — |
-| `EcoBadge` | — |
-| `ReverseLogistics` | — |
-| `EcoStaking` | — |
-| `EcoDAO` | — |
+| `EcoToken` | [0x7b9F72471D74B9C97C6DEc0ed7DB84C221843434](https://sepolia.etherscan.io/address/0x7b9F72471D74B9C97C6DEc0ed7DB84C221843434) |
+| `EcoBadge` | [0x5DE9D581032f79879Cf7A6d0Bc6b3594386464c3](https://sepolia.etherscan.io/address/0x5DE9D581032f79879Cf7A6d0Bc6b3594386464c3) |
+| `MockPriceFeed` | [0xF8b12FC3f2343Ccfb0cd22ec5D94a7109474E959](https://sepolia.etherscan.io/address/0xF8b12FC3f2343Ccfb0cd22ec5D94a7109474E959) |
+| `ReverseLogistics` | [0xD7eF7829E82cb7606877D075321b94737411E44C](https://sepolia.etherscan.io/address/0xD7eF7829E82cb7606877D075321b94737411E44C) |
+| `EcoStaking` | [0x66FF71164F93F1B4a2E9E4536201018F25157a82](https://sepolia.etherscan.io/address/0x66FF71164F93F1B4a2E9E4536201018F25157a82) |
+| `EcoDAO` | [0xc05F8C3e5bAcC3e1641Aa23eddc3323B57337F57](https://sepolia.etherscan.io/address/0xc05F8C3e5bAcC3e1641Aa23eddc3323B57337F57) |
+
 
 ---
 
-## Estrutura do Repositório
+## Estrutura do repositório
 
 ```
 tracktrash/

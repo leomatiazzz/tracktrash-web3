@@ -3,7 +3,21 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+/// @dev Interface mínima do EcoToken expondo apenas o que este contrato precisa
+interface IEcoToken {
+    function mint(address to, uint256 amount) external;
+}
+
+/// @dev Interface mínima do EcoBadge
+interface IEcoBadge {
+    function mintBadge(
+        address recipient,
+        string calldata achievementType,
+        uint256 impactScore,
+        string calldata metadataURI
+    ) external returns (uint256 tokenId);
+}
 
 interface AggregatorV3Interface {
     function decimals() external view returns (uint8);
@@ -24,10 +38,12 @@ contract ReverseLogistics is AccessControl, ReentrancyGuard {
         uint256 ethUsdPrice;
         uint256 feePaidWei;
         uint256 rewardAmount;
+        uint256 badgeTokenId;
         string metadataURI;
     }
 
-    IERC20 public immutable ecoToken;
+    IEcoToken public immutable ecoToken;
+    IEcoBadge public immutable ecoBadge;
     AggregatorV3Interface public priceFeed;
 
     uint256 public flatFeeUsd18;
@@ -54,17 +70,20 @@ contract ReverseLogistics is AccessControl, ReentrancyGuard {
     constructor(
         address admin,
         address ecoTokenAddress,
+        address ecoBadgeAddress,
         address priceFeedAddress,
         uint256 flatFeeUsd18_,
         uint256 rewardUsd18_,
         uint256 ecoTokenUsdPrice18_
     ) {
-        require(admin != address(0), "ReverseLogistics: admin zero");
+        require(admin != address(0),          "ReverseLogistics: admin zero");
         require(ecoTokenAddress != address(0), "ReverseLogistics: token zero");
-        require(priceFeedAddress != address(0), "ReverseLogistics: feed zero");
-        require(ecoTokenUsdPrice18_ > 0, "ReverseLogistics: token price zero");
+        require(ecoBadgeAddress != address(0), "ReverseLogistics: badge zero");
+        require(priceFeedAddress != address(0),"ReverseLogistics: feed zero");
+        require(ecoTokenUsdPrice18_ > 0,       "ReverseLogistics: token price zero");
 
-        ecoToken = IERC20(ecoTokenAddress);
+        ecoToken = IEcoToken(ecoTokenAddress);
+        ecoBadge = IEcoBadge(ecoBadgeAddress);
         priceFeed = AggregatorV3Interface(priceFeedAddress);
         flatFeeUsd18 = flatFeeUsd18_;
         rewardUsd18 = rewardUsd18_;
@@ -77,33 +96,44 @@ contract ReverseLogistics is AccessControl, ReentrancyGuard {
     function registerReturn(
         string calldata itemId,
         uint256 quantity,
-        string calldata metadataURI
+        string calldata metadataURI,
+        string calldata achievementType,
+        uint256 impactScore
     ) external payable nonReentrant returns (uint256 returnId) {
-        require(quantity > 0, "ReverseLogistics: quantity zero");
-        require(bytes(itemId).length > 0, "ReverseLogistics: item empty");
+        require(quantity > 0,               "ReverseLogistics: quantity zero");
+        require(bytes(itemId).length > 0,   "ReverseLogistics: item empty");
 
-        uint256 ethUsdPrice = _ethUsdPrice();
-        uint256 requiredFeeWei = usd18ToWei(flatFeeUsd18, ethUsdPrice);
+        uint256 ethUsdPrice     = _ethUsdPrice();
+        uint256 requiredFeeWei  = usd18ToWei(flatFeeUsd18, ethUsdPrice);
         require(msg.value >= requiredFeeWei, "ReverseLogistics: insufficient fee");
 
         uint256 rewardAmount = (rewardUsd18 * 1e18) / ecoTokenUsdPrice18;
-        require(ecoToken.balanceOf(address(this)) >= rewardAmount, "ReverseLogistics: reward pool empty");
 
         returnId = ++nextReturnId;
+
+        // Minta ECO como recompensa (requer MINTER_ROLE no EcoToken)
+        ecoToken.mint(msg.sender, rewardAmount);
+
+        // Minta EcoBadge NFT atomicamente (requer MINTER_ROLE no EcoBadge)
+        uint256 badgeTokenId = ecoBadge.mintBadge(
+            msg.sender,
+            achievementType,
+            impactScore,
+            metadataURI
+        );
+
         returnsById[returnId] = ReturnRecord({
-            user: msg.sender,
-            itemId: itemId,
-            quantity: quantity,
-            timestamp: block.timestamp,
-            ethUsdPrice: ethUsdPrice,
-            feePaidWei: msg.value,
+            user:         msg.sender,
+            itemId:       itemId,
+            quantity:     quantity,
+            timestamp:    block.timestamp,
+            ethUsdPrice:  ethUsdPrice,
+            feePaidWei:   msg.value,
             rewardAmount: rewardAmount,
-            metadataURI: metadataURI
+            badgeTokenId: badgeTokenId,
+            metadataURI:  metadataURI
         });
         returnsByUser[msg.sender].push(returnId);
-
-        bool ok = ecoToken.transfer(msg.sender, rewardAmount);
-        require(ok, "ReverseLogistics: reward transfer fail");
 
         emit ReturnRegistered(returnId, msg.sender, itemId, quantity, msg.value, rewardAmount, ethUsdPrice);
     }

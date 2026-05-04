@@ -111,6 +111,7 @@ async function main(): Promise<void> {
     await new ReverseLogistics__factory(deployer).deploy(
       deployer.address,                    // admin
       await ecoToken.getAddress(),         // ecoTokenAddress
+      await ecoBadge.getAddress(),         // ecoBadgeAddress  ← novo
       await mockPriceFeed.getAddress(),    // priceFeedAddress
       5n * 10n ** 18n,                     // flatFeeUsd18_
       3n * 10n ** 18n,                     // rewardUsd18_
@@ -135,6 +136,28 @@ async function main(): Promise<void> {
     1_000n * 10n ** 18n,          // quorum_
   );
   await ecoDao.waitForDeployment();
+
+  // ── Concessão de MINTER_ROLE (padrão mint-on-demand) ─────────────────────
+  // ReverseLogistics e EcoStaking mintam ECO diretamente para os usuários,
+  // eliminando a necessidade de pools pré-financiados.
+  console.log("\nConcedendo MINTER_ROLE aos contratos operacionais…");
+
+  const MINTER_ROLE = await ecoToken.MINTER_ROLE();
+
+  // EcoToken: ReverseLogistics e EcoStaking podem mintar ECO
+  const grantRLTx = await ecoToken.grantRole(MINTER_ROLE, await reverseLogistics.getAddress());
+  await grantRLTx.wait();
+  console.log("  ✔ MINTER_ROLE no EcoToken → ReverseLogistics");
+
+  const grantSTTx = await ecoToken.grantRole(MINTER_ROLE, await ecoStaking.getAddress());
+  await grantSTTx.wait();
+  console.log("  ✔ MINTER_ROLE no EcoToken → EcoStaking");
+
+  // EcoBadge: ReverseLogistics pode mintar NFTs de devolução
+  const badgeMinterRole = await ecoBadge.MINTER_ROLE();
+  const grantBadgeTx = await ecoBadge.grantRole(badgeMinterRole, await reverseLogistics.getAddress());
+  await grantBadgeTx.wait();
+  console.log("  ✔ MINTER_ROLE no EcoBadge  → ReverseLogistics");
 
   // ── Grava o contracts.json ─────────────────────────────────────────────────
   const contractsJson: ContractsFile = {

@@ -6,12 +6,13 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface ReverseLogisticsInterface extends Interface {
-    getFunction(nameOrSignature: "DEFAULT_ADMIN_ROLE" | "MANAGER_ROLE" | "ecoToken" | "ecoTokenUsdPrice18" | "flatFeeUsd18" | "getReturnsByUser" | "getRoleAdmin" | "grantRole" | "hasRole" | "nextReturnId" | "priceFeed" | "registerReturn" | "renounceRole" | "returnsById" | "returnsByUser" | "revokeRole" | "rewardUsd18" | "setPriceFeed" | "setPricingParams" | "supportsInterface" | "usd18ToWei" | "withdrawFees"): FunctionFragment;
+    getFunction(nameOrSignature: "DEFAULT_ADMIN_ROLE" | "MANAGER_ROLE" | "ecoBadge" | "ecoToken" | "ecoTokenUsdPrice18" | "flatFeeUsd18" | "getReturnsByUser" | "getRoleAdmin" | "grantRole" | "hasRole" | "nextReturnId" | "priceFeed" | "registerReturn" | "renounceRole" | "returnsById" | "returnsByUser" | "revokeRole" | "rewardUsd18" | "setPriceFeed" | "setPricingParams" | "supportsInterface" | "usd18ToWei" | "withdrawFees"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "FeesWithdrawn" | "PriceFeedUpdated" | "PricingParamsUpdated" | "ReturnRegistered" | "RoleAdminChanged" | "RoleGranted" | "RoleRevoked"): EventFragment;
 
     encodeFunctionData(functionFragment: 'DEFAULT_ADMIN_ROLE', values?: undefined): string;
 encodeFunctionData(functionFragment: 'MANAGER_ROLE', values?: undefined): string;
+encodeFunctionData(functionFragment: 'ecoBadge', values?: undefined): string;
 encodeFunctionData(functionFragment: 'ecoToken', values?: undefined): string;
 encodeFunctionData(functionFragment: 'ecoTokenUsdPrice18', values?: undefined): string;
 encodeFunctionData(functionFragment: 'flatFeeUsd18', values?: undefined): string;
@@ -21,7 +22,7 @@ encodeFunctionData(functionFragment: 'grantRole', values: [BytesLike, AddressLik
 encodeFunctionData(functionFragment: 'hasRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'nextReturnId', values?: undefined): string;
 encodeFunctionData(functionFragment: 'priceFeed', values?: undefined): string;
-encodeFunctionData(functionFragment: 'registerReturn', values: [string, BigNumberish, string]): string;
+encodeFunctionData(functionFragment: 'registerReturn', values: [string, BigNumberish, string, string, BigNumberish]): string;
 encodeFunctionData(functionFragment: 'renounceRole', values: [BytesLike, AddressLike]): string;
 encodeFunctionData(functionFragment: 'returnsById', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'returnsByUser', values: [AddressLike, BigNumberish]): string;
@@ -35,6 +36,7 @@ encodeFunctionData(functionFragment: 'withdrawFees', values: [AddressLike, BigNu
 
     decodeFunctionResult(functionFragment: 'DEFAULT_ADMIN_ROLE', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'MANAGER_ROLE', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'ecoBadge', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'ecoToken', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'ecoTokenUsdPrice18', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'flatFeeUsd18', data: BytesLike): Result;
@@ -192,6 +194,14 @@ decodeFunctionResult(functionFragment: 'withdrawFees', data: BytesLike): Result;
     
 
     
+    ecoBadge: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     ecoToken: TypedContractMethod<
       [],
       [string],
@@ -265,7 +275,7 @@ decodeFunctionResult(functionFragment: 'withdrawFees', data: BytesLike): Result;
 
     
     registerReturn: TypedContractMethod<
-      [itemId: string, quantity: BigNumberish, metadataURI: string, ],
+      [itemId: string, quantity: BigNumberish, metadataURI: string, achievementType: string, impactScore: BigNumberish, ],
       [bigint],
       'payable'
     >
@@ -282,7 +292,7 @@ decodeFunctionResult(functionFragment: 'withdrawFees', data: BytesLike): Result;
     
     returnsById: TypedContractMethod<
       [arg0: BigNumberish, ],
-      [[string, string, bigint, bigint, bigint, bigint, bigint, string] & {user: string, itemId: string, quantity: bigint, timestamp: bigint, ethUsdPrice: bigint, feePaidWei: bigint, rewardAmount: bigint, metadataURI: string }],
+      [[string, string, bigint, bigint, bigint, bigint, bigint, bigint, string] & {user: string, itemId: string, quantity: bigint, timestamp: bigint, ethUsdPrice: bigint, feePaidWei: bigint, rewardAmount: bigint, badgeTokenId: bigint, metadataURI: string }],
       'view'
     >
     
@@ -364,6 +374,11 @@ getFunction(nameOrSignature: 'MANAGER_ROLE'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'ecoBadge'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
 getFunction(nameOrSignature: 'ecoToken'): TypedContractMethod<
       [],
       [string],
@@ -410,7 +425,7 @@ getFunction(nameOrSignature: 'priceFeed'): TypedContractMethod<
       'view'
     >;
 getFunction(nameOrSignature: 'registerReturn'): TypedContractMethod<
-      [itemId: string, quantity: BigNumberish, metadataURI: string, ],
+      [itemId: string, quantity: BigNumberish, metadataURI: string, achievementType: string, impactScore: BigNumberish, ],
       [bigint],
       'payable'
     >;
@@ -421,7 +436,7 @@ getFunction(nameOrSignature: 'renounceRole'): TypedContractMethod<
     >;
 getFunction(nameOrSignature: 'returnsById'): TypedContractMethod<
       [arg0: BigNumberish, ],
-      [[string, string, bigint, bigint, bigint, bigint, bigint, string] & {user: string, itemId: string, quantity: bigint, timestamp: bigint, ethUsdPrice: bigint, feePaidWei: bigint, rewardAmount: bigint, metadataURI: string }],
+      [[string, string, bigint, bigint, bigint, bigint, bigint, bigint, string] & {user: string, itemId: string, quantity: bigint, timestamp: bigint, ethUsdPrice: bigint, feePaidWei: bigint, rewardAmount: bigint, badgeTokenId: bigint, metadataURI: string }],
       'view'
     >;
 getFunction(nameOrSignature: 'returnsByUser'): TypedContractMethod<

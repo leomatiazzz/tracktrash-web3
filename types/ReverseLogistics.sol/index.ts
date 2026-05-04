@@ -2,4 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { AggregatorV3Interface } from './AggregatorV3Interface.js';
+export type { IEcoBadge } from './IEcoBadge.js';
+export type { IEcoToken } from './IEcoToken.js';
 export type { ReverseLogistics } from './ReverseLogistics.js';

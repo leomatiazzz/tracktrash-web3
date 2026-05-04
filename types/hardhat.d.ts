@@ -13,33 +13,45 @@ declare module "@nomicfoundation/hardhat-ethers/types" {
   getContractFactory(name: 'EcoBadge', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EcoBadge__factory>
 getContractFactory(name: 'EcoDAO', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EcoDAO__factory>
 getContractFactory(name: 'EcoStaking', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EcoStaking__factory>
+getContractFactory(name: 'IEcoToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEcoToken__factory>
 getContractFactory(name: 'EcoToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EcoToken__factory>
 getContractFactory(name: 'MockV3Aggregator', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.MockV3Aggregator__factory>
 getContractFactory(name: 'AggregatorV3Interface', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.AggregatorV3Interface__factory>
+getContractFactory(name: 'IEcoBadge', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEcoBadge__factory>
+getContractFactory(name: 'IEcoToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.IEcoToken__factory>
 getContractFactory(name: 'ReverseLogistics', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.ReverseLogistics__factory>
 
   getContractAt(name: 'EcoBadge', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EcoBadge>
 getContractAt(name: 'EcoDAO', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EcoDAO>
 getContractAt(name: 'EcoStaking', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EcoStaking>
+getContractAt(name: 'IEcoToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEcoToken>
 getContractAt(name: 'EcoToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EcoToken>
 getContractAt(name: 'MockV3Aggregator', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.MockV3Aggregator>
 getContractAt(name: 'AggregatorV3Interface', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.AggregatorV3Interface>
+getContractAt(name: 'IEcoBadge', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEcoBadge>
+getContractAt(name: 'IEcoToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.IEcoToken>
 getContractAt(name: 'ReverseLogistics', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.ReverseLogistics>
 
   deployContract(name: 'EcoBadge', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoBadge>
 deployContract(name: 'EcoDAO', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoDAO>
 deployContract(name: 'EcoStaking', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoStaking>
+deployContract(name: 'IEcoToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoToken>
 deployContract(name: 'EcoToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoToken>
 deployContract(name: 'MockV3Aggregator', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockV3Aggregator>
 deployContract(name: 'AggregatorV3Interface', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AggregatorV3Interface>
+deployContract(name: 'IEcoBadge', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoBadge>
+deployContract(name: 'IEcoToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoToken>
 deployContract(name: 'ReverseLogistics', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ReverseLogistics>
 
   deployContract(name: 'EcoBadge', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoBadge>
 deployContract(name: 'EcoDAO', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoDAO>
 deployContract(name: 'EcoStaking', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoStaking>
+deployContract(name: 'IEcoToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoToken>
 deployContract(name: 'EcoToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EcoToken>
 deployContract(name: 'MockV3Aggregator', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.MockV3Aggregator>
 deployContract(name: 'AggregatorV3Interface', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.AggregatorV3Interface>
+deployContract(name: 'IEcoBadge', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoBadge>
+deployContract(name: 'IEcoToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.IEcoToken>
 deployContract(name: 'ReverseLogistics', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ReverseLogistics>
 
     // default types

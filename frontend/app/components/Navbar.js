@@ -2,7 +2,7 @@
 
 /**
  * Navbar fixa — logo à esquerda, abas no centro, wallet à direita.
- * Recebe `activeTab`, `onTabChange`, `wallet` e `onConnect` como props.
+ * Props: activeTab, onTabChange, wallet, onConnect, connecting
  */
 
 const TABS = [
@@ -16,14 +16,13 @@ function truncate(addr) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-export default function Navbar({ activeTab, onTabChange, wallet, onConnect }) {
+export default function Navbar({ activeTab, onTabChange, wallet, onConnect, connecting }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0d1610]/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
 
         {/* ── Logo ── */}
         <div className="flex items-center gap-2 select-none">
-          {/* leaf icon */}
           <svg
             style={{ width: 28, height: 28, display: "block", flexShrink: 0, color: "#4ade80" }}
             viewBox="0 0 24 24"
@@ -79,10 +78,12 @@ export default function Navbar({ activeTab, onTabChange, wallet, onConnect }) {
             </div>
           ) : (
             <button
+              id="btn-connect-wallet"
               onClick={onConnect}
-              className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-green-900/40 transition hover:bg-green-400 active:scale-95"
+              disabled={connecting}
+              className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-green-900/40 transition hover:bg-green-400 active:scale-95 disabled:opacity-60 disabled:cursor-wait"
             >
-              Conectar Carteira
+              {connecting ? "Aguardando carteira…" : "Conectar Carteira"}
             </button>
           )}
         </div>

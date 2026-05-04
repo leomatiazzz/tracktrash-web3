@@ -1,9 +1,9 @@
 {
   "network": "hardhat",
-  "generatedAt": "2026-04-28T01:26:44.708Z",
+  "generatedAt": "2026-05-04T16:41:35.103Z",
   "contracts": {
     "EcoToken": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "address": "0x7b9F72471D74B9C97C6DEc0ed7DB84C221843434",
       "abi": [
         {
           "inputs": [
@@ -583,7 +583,7 @@
       ]
     },
     "EcoBadge": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "address": "0x5DE9D581032f79879Cf7A6d0Bc6b3594386464c3",
       "abi": [
         {
           "inputs": [
@@ -1403,7 +1403,7 @@
       ]
     },
     "ReverseLogistics": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "address": "0xD7eF7829E82cb7606877D075321b94737411E44C",
       "abi": [
         {
           "inputs": [
@@ -1415,6 +1415,11 @@
             {
               "internalType": "address",
               "name": "ecoTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "ecoBadgeAddress",
               "type": "address"
             },
             {
@@ -1676,10 +1681,23 @@
         },
         {
           "inputs": [],
+          "name": "ecoBadge",
+          "outputs": [
+            {
+              "internalType": "contract IEcoBadge",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "ecoToken",
           "outputs": [
             {
-              "internalType": "contract IERC20",
+              "internalType": "contract IEcoToken",
               "name": "",
               "type": "address"
             }
@@ -1835,6 +1853,16 @@
               "internalType": "string",
               "name": "metadataURI",
               "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "achievementType",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "impactScore",
+              "type": "uint256"
             }
           ],
           "name": "registerReturn",
@@ -1909,6 +1937,11 @@
             {
               "internalType": "uint256",
               "name": "rewardAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "badgeTokenId",
               "type": "uint256"
             },
             {
@@ -2075,7 +2108,7 @@
       ]
     },
     "EcoStaking": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "address": "0x66FF71164F93F1B4a2E9E4536201018F25157a82",
       "abi": [
         {
           "inputs": [
@@ -2511,7 +2544,7 @@
           "name": "rewardToken",
           "outputs": [
             {
-              "internalType": "contract IERC20",
+              "internalType": "contract IEcoToken",
               "name": "",
               "type": "address"
             }
@@ -2625,7 +2658,7 @@
       ]
     },
     "EcoDAO": {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "address": "0xc05F8C3e5bAcC3e1641Aa23eddc3323B57337F57",
       "abi": [
         {
           "inputs": [
