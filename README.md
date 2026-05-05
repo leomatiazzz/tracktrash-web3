@@ -271,13 +271,13 @@ Preparamos um guia detalhado cobrindo cada etapa — da instalação do ambiente
 
 ---
 
-## Segurança e Auditoria
+## Segurança e auditoria
 
 Os contratos inteligentes do protocolo TrackTrash foram submetidos a uma análise de segurança utilizando **Slither v0.11.5** (análise estática desenvolvida pela Trail of Bits). A auditoria cobriu o contrato principal `ReverseLogistics.sol` e suas dependências OpenZeppelin.
 
 **Resultado:** nenhuma vulnerabilidade crítica ou de alta severidade foi identificada. Os achados encontrados são classificados como `Low` ou `Informational` e possuem mitigações já em vigor (como o `ReentrancyGuard` da OpenZeppelin e o controle de acesso via `AccessControl`).
 
-📋 **[Ler o Relatório de Auditoria Completo](AUDITORIA.md)**
+📋 **[Ler o relatório de auditoria completo](AUDITORIA.md)**
 
 > A auditoria foi realizada com `solc 0.8.26` via `solc-select` e `slither` com remapping das dependências OpenZeppelin. O relatório segue o formato acadêmico exigido, com escopo, metodologia, achados detalhados, tabela resumo e recomendações de correção.
 
