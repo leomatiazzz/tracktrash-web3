@@ -33,6 +33,7 @@ type ContractExport = {
 
 type ContractsFile = {
   network: string;
+  chainId: number;
   generatedAt: string;
   contracts: {
     EcoToken: ContractExport;
@@ -161,7 +162,8 @@ async function main(): Promise<void> {
 
   // ── Grava o contracts.json ─────────────────────────────────────────────────
   const contractsJson: ContractsFile = {
-    network: "hardhat",
+    network: network.name,
+    chainId: network.config.chainId ?? 31337,
     generatedAt: new Date().toISOString(),
     contracts: {
       EcoToken: {

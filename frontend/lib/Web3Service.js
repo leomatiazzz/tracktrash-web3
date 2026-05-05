@@ -140,7 +140,7 @@ export class Web3Service {
       metadataURI,
       achievementType,
       BigInt(impactScore),
-      { value: parseEther(feeInEth), ...fees, gasLimit: 500_000n }
+      { value: parseEther(feeInEth), ...fees, gasLimit: 2_000_000n }
     );
     const receipt = await tx.wait();
 

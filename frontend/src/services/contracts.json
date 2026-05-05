@@ -1,5 +1,6 @@
 {
-  "network": "hardhat",
+  "network": "sepolia",
+  "chainId": 11155111,
   "generatedAt": "2026-05-04T20:12:59.198Z",
   "contracts": {
     "EcoToken": {

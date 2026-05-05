@@ -13,20 +13,34 @@ export function useWeb3() {
   return ctx;
 }
 
+// chainId esperado vem do contracts.json (gerado no deploy)
+const EXPECTED_CHAIN_ID = contractsData.chainId ?? 11155111;
+
 // ─── Provider ─────────────────────────────────────────────────────────────────
 export function Web3Provider({ children }) {
   const web3 = useMemo(() => new Web3Service(), []);
 
-  const [wallet,     setWallet]     = useState("");
-  const [connecting, setConnecting] = useState(false);
-  const [status,     setStatus]     = useState("Pronto.");
+  const [wallet,         setWallet]         = useState("");
+  const [connecting,     setConnecting]     = useState(false);
+  const [status,         setStatus]         = useState("Pronto.");
+  const [currentChainId, setCurrentChainId] = useState(null);
   const network = contractsData.network ?? "—";
 
-  // Detecta troca de conta e desconexão no MetaMask
+  // rede incorreta = carteira conectada mas chainId diferente do esperado
+  const isWrongNetwork =
+    Boolean(wallet) && currentChainId !== null && currentChainId !== EXPECTED_CHAIN_ID;
+
+  // ─── Detecta rede e eventos ──────────────────────────────────────────────
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
 
-    // Verifica passivamente se já há contas autorizadas (sem popup)
+    // Lê chainId inicial (passivo)
+    window.ethereum
+      .request({ method: "eth_chainId" })
+      .then((id) => setCurrentChainId(parseInt(id, 16)))
+      .catch(() => {});
+
+    // Lê contas iniciais (passivo, sem popup)
     window.ethereum
       .request({ method: "eth_accounts" })
       .then((accounts) => { if (!accounts?.length) setWallet(""); })
@@ -44,6 +58,13 @@ export function Web3Provider({ children }) {
       }
     };
 
+    const onChainChanged = (chainIdHex) => {
+      setCurrentChainId(parseInt(chainIdHex, 16));
+      // Invalida provider/signer ao trocar de rede
+      web3.provider = null;
+      web3.signer   = null;
+    };
+
     const onDisconnect = () => {
       setWallet("");
       web3.signer   = null;
@@ -52,20 +73,40 @@ export function Web3Provider({ children }) {
     };
 
     window.ethereum.on("accountsChanged", onAccountsChanged);
+    window.ethereum.on("chainChanged",    onChainChanged);
     window.ethereum.on("disconnect",      onDisconnect);
     return () => {
       window.ethereum.removeListener("accountsChanged", onAccountsChanged);
+      window.ethereum.removeListener("chainChanged",    onChainChanged);
       window.ethereum.removeListener("disconnect",      onDisconnect);
     };
   }, [web3]);
 
-  // ─── Handler de conexão ───────────────────────────────────────────────────
+  // ─── Troca para a rede correta ───────────────────────────────────────────
+  async function switchToCorrectNetwork() {
+    try {
+      await web3.ensureCorrectNetwork();
+      const id = await window.ethereum.request({ method: "eth_chainId" });
+      setCurrentChainId(parseInt(id, 16));
+      // Recria provider/signer após troca bem-sucedida
+      const { BrowserProvider } = await import("ethers");
+      web3.provider = new BrowserProvider(window.ethereum);
+      web3.signer   = await web3.provider.getSigner();
+      setStatus("Rede alterada para Sepolia com sucesso.");
+    } catch {
+      setStatus("Troca de rede cancelada ou falhou.");
+    }
+  }
+
+  // ─── Handler de conexão ──────────────────────────────────────────────────
   async function handleConnect() {
     try {
       setConnecting(true);
       setStatus("Aguardando autorização da carteira…");
       const address = await web3.connectWallet();
       setWallet(address);
+      const id = await window.ethereum.request({ method: "eth_chainId" });
+      setCurrentChainId(parseInt(id, 16));
       setStatus("Carteira conectada com sucesso.");
     } catch (err) {
       setStatus(`Erro ao conectar: ${err.message}`);
@@ -76,7 +117,19 @@ export function Web3Provider({ children }) {
 
   return (
     <Web3Context.Provider
-      value={{ web3, wallet, connecting, status, setStatus, network, handleConnect }}
+      value={{
+        web3,
+        wallet,
+        connecting,
+        status,
+        setStatus,
+        network,
+        handleConnect,
+        isWrongNetwork,
+        currentChainId,
+        expectedChainId: EXPECTED_CHAIN_ID,
+        switchToCorrectNetwork,
+      }}
     >
       {children}
     </Web3Context.Provider>

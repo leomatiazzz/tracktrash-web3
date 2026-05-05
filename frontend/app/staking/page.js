@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useWeb3 }  from "../context/Web3Context";
-import StakingTab   from "../components/StakingTab";
+import { useState }       from "react";
+import { useWeb3 }        from "../context/Web3Context";
+import { parseWeb3Error } from "../../lib/parseWeb3Error";
+import StakingTab         from "../components/StakingTab";
 
 export default function StakingPage() {
   const { web3, wallet, setStatus } = useWeb3();
@@ -15,8 +16,7 @@ export default function StakingPage() {
       const txHash = await web3.stakeEcoTokens(stakeAmountWei);
       setStatus(`Stake realizado. Tx: ${txHash.slice(0, 14)}…`);
     } catch (err) {
-      const raw = err.message ?? String(err);
-      setStatus(`Erro no staking: ${raw.split(" (error=")[0]}`);
+      setStatus(`Erro no staking: ${parseWeb3Error(err)}`);
     }
   }
 

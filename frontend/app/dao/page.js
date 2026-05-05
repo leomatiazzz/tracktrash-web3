@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useWeb3 }  from "../context/Web3Context";
-import DAOTab       from "../components/DAOTab";
+import { useState }       from "react";
+import { useWeb3 }        from "../context/Web3Context";
+import { parseWeb3Error } from "../../lib/parseWeb3Error";
+import DAOTab             from "../components/DAOTab";
 
 export default function DAOPage() {
   const { web3, wallet, setStatus } = useWeb3();
@@ -16,8 +17,7 @@ export default function DAOPage() {
       const txHash = await web3.voteInDao(proposalId, support);
       setStatus(`Voto registrado. Tx: ${txHash.slice(0, 14)}…`);
     } catch (err) {
-      const raw = err.message ?? String(err);
-      setStatus(`Erro na votação: ${raw.split(" (error=")[0]}`);
+      setStatus(`Erro na votação: ${parseWeb3Error(err)}`);
     }
   }
 

@@ -30,7 +30,10 @@ const STATUS_STYLES = {
  * Renderiza a Navbar global e a barra de status compartilhada.
  */
 export default function AppShell({ children }) {
-  const { wallet, connecting, status, network, handleConnect } = useWeb3();
+  const {
+    wallet, connecting, status, network, handleConnect,
+    isWrongNetwork, switchToCorrectNetwork,
+  } = useWeb3();
   const sType = statusType(status);
   const style = STATUS_STYLES[sType];
 
@@ -43,6 +46,47 @@ export default function AppShell({ children }) {
       />
 
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-24 sm:px-6">
+
+        {/* ── Banner de rede incorreta ── */}
+        {isWrongNetwork && (
+          <div
+            role="alert"
+            style={{
+              marginBottom: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              borderRadius: 12,
+              border: "1px solid rgba(239,68,68,.35)",
+              background: "rgba(239,68,68,.08)",
+              color: "#fca5a5",
+              padding: "12px 16px",
+              fontSize: 14,
+            }}
+          >
+            <span>
+              ⚠️ <strong>Rede incorreta.</strong> Os contratos estão na{" "}
+              <strong>Sepolia</strong>. Sua carteira está em outra rede.
+            </span>
+            <button
+              onClick={switchToCorrectNetwork}
+              style={{
+                flexShrink: 0,
+                borderRadius: 8,
+                background: "rgba(239,68,68,.2)",
+                border: "1px solid rgba(239,68,68,.4)",
+                color: "#fca5a5",
+                padding: "6px 14px",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Trocar para Sepolia
+            </button>
+          </div>
+        )}
 
         {/* ── Breadcrumb de rede ── */}
         <div className="mb-8">

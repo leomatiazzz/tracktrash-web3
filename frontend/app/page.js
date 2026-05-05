@@ -1,8 +1,9 @@
 "use client";
 
-import { useState }   from "react";
-import { useWeb3 }    from "./context/Web3Context";
-import LogisticsTab   from "./components/LogisticsTab";
+import { useState }        from "react";
+import { useWeb3 }         from "./context/Web3Context";
+import { parseWeb3Error }  from "../lib/parseWeb3Error";
+import LogisticsTab        from "./components/LogisticsTab";
 
 export default function LogisticsPage() {
   const { web3, wallet, setStatus } = useWeb3();
@@ -36,8 +37,7 @@ export default function LogisticsPage() {
       });
       setStatus(`Sucesso! Tx: ${result.returnTxHash.slice(0, 18)}…`);
     } catch (err) {
-      const raw = err.message ?? String(err);
-      setStatus(`Erro na devolução/NFT: ${raw.split(" (error=")[0].split(", payload=")[0]}`);
+      setStatus(`Erro na devolução/NFT: ${parseWeb3Error(err)}`);
     }
   }
 
