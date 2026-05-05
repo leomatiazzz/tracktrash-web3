@@ -259,6 +259,40 @@ tracktrash/
 
 ---
 
+## Como reproduzir o projeto
+
+Quer rodar o TrackTrash do zero, testar os contratos inteligentes ou reproduzir o ambiente de desenvolvimento completo?
+
+Preparamos um guia detalhado cobrindo cada etapa — da instalação do ambiente ao primeiro registro de devolução na testnet Sepolia, incluindo a configuração do MetaMask, o deploy dos contratos e os testes automatizados.
+
+📄 **[Guia passo a passo para reprodução manual](INSTRUÇÕES.md)**
+
+> O guia inclui: configuração do ambiente local, deploy local com Hardhat Node, deploy na Sepolia, execução do frontend e dicas de troubleshooting para os erros mais comuns.
+
+---
+
+## Segurança e Auditoria
+
+Os contratos inteligentes do protocolo TrackTrash foram submetidos a uma análise de segurança utilizando **Slither v0.11.5** (análise estática desenvolvida pela Trail of Bits). A auditoria cobriu o contrato principal `ReverseLogistics.sol` e suas dependências OpenZeppelin.
+
+**Resultado:** nenhuma vulnerabilidade crítica ou de alta severidade foi identificada. Os achados encontrados são classificados como `Low` ou `Informational` e possuem mitigações já em vigor (como o `ReentrancyGuard` da OpenZeppelin e o controle de acesso via `AccessControl`).
+
+📋 **[Ler o Relatório de Auditoria Completo](AUDITORIA.md)**
+
+> A auditoria foi realizada com `solc 0.8.26` via `solc-select` e `slither` com remapping das dependências OpenZeppelin. O relatório segue o formato acadêmico exigido, com escopo, metodologia, achados detalhados, tabela resumo e recomendações de correção.
+
+---
+
 ## Licença
 
-ISC © TrackTrash Protocol
+Este projeto foi desenvolvido para fins educacionais em hackathon e capacitação Web3.
+
+### NOTA:
+
+O projeto TrackTrash foi inicialmente desenvolvido em equipe durante o hackathon Low Hack, promovido pelo Hackathon Brasil em parceria com a Siemens, com foco no tema de sustentabilidade e gestão de resíduos eletrônicos.
+
+A solução original foi concebida e implementada em um período de 48 horas, utilizando ferramentas de low-code, como o Mendix.
+
+Posteriormente, com o consentimento dos integrantes da equipe 338, fiz a adaptação do projeto para Web3 e o aprimoramento dos contratos inteligentes.
+
+Para contato com os demais membros da equipe ou acesso aos respectivos perfis profissionais (LinkedIn), solicita-se contato prévio direto comigo, para que as informações sejam compartilhadas de forma organizada.
