@@ -8,7 +8,7 @@
 
 -----
 **Versão documentada em pdf:** [Auditoria - Relatório](Auditoria%20-%20Relat%C3%B3rio.pdf)
----
+-----
 
 ## Escopo
 
