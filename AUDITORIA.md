@@ -5,6 +5,7 @@
 **Auditores:** Análise automatizada via ferramentas de segurança formais  
 **Rede Alvo:** Ethereum Sepolia Testnet  
 **Commit analisado:** Branch `main` — contratos compilados com `solc 0.8.26`
+**Versão documentada em pdf**: [Auditoria - Relatório](Auditoria%20-%20Relat%C3%B3rio.pdf)
 
 ---
 
