@@ -1,14 +1,17 @@
 "use client";
 
+import Link        from "next/link";
+import { usePathname } from "next/navigation";
+
 /**
- * Navbar fixa — logo à esquerda, abas no centro, wallet à direita.
- * Props: activeTab, onTabChange, wallet, onConnect, connecting
+ * Navbar fixa — logo à esquerda, abas no centro (roteadas), wallet à direita.
+ * Detecta a rota ativa via usePathname() — sem props de tab.
  */
 
 const TABS = [
-  { id: "logistics", label: "Logística" },
-  { id: "staking",   label: "Staking"   },
-  { id: "dao",       label: "DAO"        },
+  { label: "Logística", href: "/"        },
+  { label: "Staking",   href: "/staking" },
+  { label: "DAO",       href: "/dao"     },
 ];
 
 function truncate(addr) {
@@ -16,13 +19,15 @@ function truncate(addr) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-export default function Navbar({ activeTab, onTabChange, wallet, onConnect, connecting }) {
+export default function Navbar({ wallet, connecting, onConnect }) {
+  const pathname = usePathname();
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0d1610]/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
 
         {/* ── Logo ── */}
-        <div className="flex items-center gap-2 select-none">
+        <Link href="/" className="flex items-center gap-2 select-none">
           <svg
             style={{ width: 28, height: 28, display: "block", flexShrink: 0, color: "#4ade80" }}
             viewBox="0 0 24 24"
@@ -36,22 +41,20 @@ export default function Navbar({ activeTab, onTabChange, wallet, onConnect, conn
             <path d="M12 22c0 0-8-5-8-12a8 8 0 0 1 16 0c0 7-8 12-8 12z" />
             <path d="M12 22V10" />
           </svg>
-          <span className="text-xl font-bold tracking-tight text-white">
-            TrackTrash
-          </span>
+          <span className="text-xl font-bold tracking-tight text-white">TrackTrash</span>
           <span className="hidden text-xs font-medium text-green-400/70 sm:inline">
             Smart Reverse Logistics
           </span>
-        </div>
+        </Link>
 
-        {/* ── Navegação por abas ── */}
+        {/* ── Navegação por rotas ── */}
         <nav className="flex items-center gap-1" aria-label="Navegação principal">
           {TABS.map((tab) => {
-            const isActive = activeTab === tab.id;
+            const isActive = pathname === tab.href;
             return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+              <Link
+                key={tab.href}
+                href={tab.href}
                 className={[
                   "relative rounded-lg px-4 py-1.5 text-sm font-medium transition-colors duration-150",
                   isActive
@@ -64,7 +67,7 @@ export default function Navbar({ activeTab, onTabChange, wallet, onConnect, conn
                 {isActive && (
                   <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-green-400" />
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>

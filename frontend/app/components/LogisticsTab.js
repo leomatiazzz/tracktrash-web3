@@ -69,19 +69,49 @@ export default function LogisticsTab({
             onChange={(e) => setFeeInEth(e.target.value)}
             placeholder="0.002"
           />
+          <p style={{ marginTop: -8, fontSize: 11, color: "#6ee7b7", opacity: 0.7 }}>
+            Mínimo ~0.002 ETH (≈ $5 USD com ETH a $3.000). Taxa vai para o pool de recompensas.
+          </p>
         </div>
       </Card>
 
       {/* ── Mint EcoBadge NFT ── */}
       <Card title="Mint EcoBadge NFT" icon={BadgeIcon}>
         <div className="flex flex-col gap-4">
-          <Field
-            id="achievementType"
-            label="Tipo de Conquista"
-            value={achievementType}
-            onChange={(e) => setAchievementType(e.target.value)}
-            placeholder="Ex.: Reciclagem Avançada"
-          />
+          {/* Tipo de Conquista — dropdown */}
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="achievementType"
+              className="text-xs font-medium text-slate-400"
+            >
+              Tipo de Conquista
+            </label>
+            <select
+              id="achievementType"
+              value={achievementType}
+              onChange={(e) => setAchievementType(e.target.value)}
+              className="w-full rounded-lg border border-white/10 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-green-500/50 focus:ring-1 focus:ring-green-500/30"
+              style={{ backgroundColor: "#0f2318", colorScheme: "dark" }}
+            >
+              {[
+                "Primeira Reciclagem",
+                "Reciclagem Avançada",
+                "Herói do Plástico",
+                "Mestre do Vidro",
+                "Guardião do E-Lixo",
+                "Resgate de Embalagens",
+                "Eco Embaixador",
+              ].map((opt) => (
+                <option
+                  key={opt}
+                  value={opt}
+                  style={{ backgroundColor: "#0f2318", color: "#f1f5f9" }}
+                >
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
           <Field
             id="impactScore"
             label="Impact Score"

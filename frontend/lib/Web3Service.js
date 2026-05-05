@@ -26,6 +26,44 @@ export class Web3Service {
   }
 
   /**
+   * Troca a rede para Sepolia (chainId 11155111) se necessário.
+   * Dispara o popup de troca de rede no MetaMask.
+   */
+  async ensureCorrectNetwork() {
+    const SEPOLIA_CHAIN_ID = "0xaa36a7"; // 11155111 em hex
+
+    const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+
+    if (currentChainId !== SEPOLIA_CHAIN_ID) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: SEPOLIA_CHAIN_ID }],
+        });
+      } catch (switchError) {
+        // Código 4902: rede não adicionada na carteira — adiciona automaticamente
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId:         SEPOLIA_CHAIN_ID,
+              chainName:       "Sepolia Testnet",
+              nativeCurrency:  { name: "SepoliaETH", symbol: "ETH", decimals: 18 },
+              rpcUrls:         ["https://rpc.sepolia.org"],
+              blockExplorerUrls: ["https://sepolia.etherscan.io"],
+            }],
+          });
+        } else {
+          throw new Error("Por favor, troque para a rede Sepolia no MetaMask.");
+        }
+      }
+      // Recria o provider após a troca de rede
+      this.provider = new BrowserProvider(window.ethereum);
+      this.signer   = await this.provider.getSigner();
+    }
+  }
+
+  /**
    * Dispara o popup de conexão da carteira (MetaMask, Rabby, Coinbase Wallet, etc.)
    * usando a API EIP-1193 nativa — compatível com qualquer extensão de carteira.
    * Retorna o endereço da conta selecionada.
@@ -47,6 +85,9 @@ export class Web3Service {
     this.provider = new BrowserProvider(window.ethereum);
     this.signer   = await this.provider.getSigner();
 
+    // Garante que está na Sepolia logo após conectar
+    await this.ensureCorrectNetwork();
+
     return accounts[0];
   }
 
@@ -54,6 +95,22 @@ export class Web3Service {
     if (!this.signer) {
       throw new Error("Carteira nao conectada. Clique em 'Conectar MetaMask'.");
     }
+  }
+
+  /**
+   * Consulta o gas atual da rede e aplica uma margem de +30% no priority fee
+   * para evitar rejeições por "gas tip cap below minimum" em redes como Sepolia.
+   */
+  async _gasFees() {
+    const feeData = await this.provider.getFeeData();
+    const MARGIN = 130n; // +30%
+
+    const maxPriorityFeePerGas =
+      (feeData.maxPriorityFeePerGas ?? 1_500_000_000n) * MARGIN / 100n;
+    const maxFeePerGas =
+      (feeData.maxFeePerGas ?? 30_000_000_000n) * MARGIN / 100n;
+
+    return { maxPriorityFeePerGas, maxFeePerGas };
   }
 
   async registerReturnAndMintBadge({
@@ -65,22 +122,25 @@ export class Web3Service {
     impactScore
   }) {
     this.ensureSigner();
+    await this.ensureCorrectNetwork();
     const reverseLogisticsConfig = getContractConfig("ReverseLogistics");
-
     const reverseLogistics = new Contract(
       reverseLogisticsConfig.address,
       reverseLogisticsConfig.abi,
       this.signer
     );
 
-    // Uma única transação: registerReturn agora minta ECO + EcoBadge internamente
+    const fees = await this._gasFees();
+
+    // Uma única transação: registerReturn minta ECO + EcoBadge internamente.
+    // gasLimit explícito: contorna eth_estimateGas instável em nós públicos da Sepolia.
     const tx = await reverseLogistics.registerReturn(
       itemId,
       quantity,
       metadataURI,
       achievementType,
       BigInt(impactScore),
-      { value: parseEther(feeInEth) }
+      { value: parseEther(feeInEth), ...fees, gasLimit: 500_000n }
     );
     const receipt = await tx.wait();
 
@@ -89,20 +149,24 @@ export class Web3Service {
 
   async stakeEcoTokens(amountWei) {
     this.ensureSigner();
+    await this.ensureCorrectNetwork();
     const stakingConfig = getContractConfig("EcoStaking");
     const staking = new Contract(stakingConfig.address, stakingConfig.abi, this.signer);
 
-    const tx = await staking.stake(BigInt(amountWei));
+    const fees = await this._gasFees();
+    const tx = await staking.stake(BigInt(amountWei), fees);
     const receipt = await tx.wait();
     return receipt.hash;
   }
 
   async voteInDao(proposalId, support) {
     this.ensureSigner();
+    await this.ensureCorrectNetwork();
     const daoConfig = getContractConfig("EcoDAO");
     const dao = new Contract(daoConfig.address, daoConfig.abi, this.signer);
 
-    const tx = await dao.vote(BigInt(proposalId), support);
+    const fees = await this._gasFees();
+    const tx = await dao.vote(BigInt(proposalId), support, fees);
     const receipt = await tx.wait();
     return receipt.hash;
   }

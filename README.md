@@ -212,12 +212,12 @@ Acesse `http://localhost:3000`. O frontend lê automaticamente os endereços de 
 
 | Contrato | Endereço |
 |---|---|
-| `EcoToken` | [0x7b9F72471D74B9C97C6DEc0ed7DB84C221843434](https://sepolia.etherscan.io/address/0x7b9F72471D74B9C97C6DEc0ed7DB84C221843434) |
-| `EcoBadge` | [0x5DE9D581032f79879Cf7A6d0Bc6b3594386464c3](https://sepolia.etherscan.io/address/0x5DE9D581032f79879Cf7A6d0Bc6b3594386464c3) |
-| `MockPriceFeed` | [0xF8b12FC3f2343Ccfb0cd22ec5D94a7109474E959](https://sepolia.etherscan.io/address/0xF8b12FC3f2343Ccfb0cd22ec5D94a7109474E959) |
-| `ReverseLogistics` | [0xD7eF7829E82cb7606877D075321b94737411E44C](https://sepolia.etherscan.io/address/0xD7eF7829E82cb7606877D075321b94737411E44C) |
-| `EcoStaking` | [0x66FF71164F93F1B4a2E9E4536201018F25157a82](https://sepolia.etherscan.io/address/0x66FF71164F93F1B4a2E9E4536201018F25157a82) |
-| `EcoDAO` | [0xc05F8C3e5bAcC3e1641Aa23eddc3323B57337F57](https://sepolia.etherscan.io/address/0xc05F8C3e5bAcC3e1641Aa23eddc3323B57337F57) |
+| `EcoToken` | [0xEe1aE11911b89ca343CFD89634b1A4De651915e9](https://sepolia.etherscan.io/address/0xEe1aE11911b89ca343CFD89634b1A4De651915e9) |
+| `EcoBadge` | [0x7F42eB80fBec6B17B4286862d86b871858897888](https://sepolia.etherscan.io/address/0x7F42eB80fBec6B17B4286862d86b871858897888) |
+| `MockPriceFeed` | [0x7b23dE9Ecc1703C58Fb1F765A3657d575ef738Cd](https://sepolia.etherscan.io/address/0x7b23dE9Ecc1703C58Fb1F765A3657d575ef738Cd) |
+| `ReverseLogistics` | [0x626332A414efbb1Fe4680C038F06d8cDb5f74E3E](https://sepolia.etherscan.io/address/0x626332A414efbb1Fe4680C038F06d8cDb5f74E3E) |
+| `EcoStaking` | [0xa8f93E23F5e65cC80aD67b68f45817b592b60aA1](https://sepolia.etherscan.io/address/0xa8f93E23F5e65cC80aD67b68f45817b592b60aA1) |
+| `EcoDAO` | [0x6Bec3b09c541e6e1fdedf86B3a6d2234e15155C4](https://sepolia.etherscan.io/address/0x6Bec3b09c541e6e1fdedf86B3a6d2234e15155C4) |
 
 
 ---

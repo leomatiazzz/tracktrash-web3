@@ -1,4 +1,6 @@
 import "./globals.css";
+import { Web3Provider } from "./context/Web3Context";
+import AppShell         from "./components/AppShell";
 
 export const metadata = {
   title: "TrackTrash — Smart Reverse Logistics",
@@ -28,7 +30,10 @@ export default function RootLayout({ children }) {
           WebkitFontSmoothing: "antialiased",
         }}
       >
-        {children}
+        {/* Web3Provider envolve toda a árvore — estado de carteira acessível em qualquer rota */}
+        <Web3Provider>
+          <AppShell>{children}</AppShell>
+        </Web3Provider>
       </body>
     </html>
   );
