@@ -3,6 +3,15 @@
 > **Protocolo Web3 de Logística Reversa com incentivos financeiros on-chain, rastreabilidade em NFTs e governança descentralizada.**
 
 ---
+## NOTA:
+
+O projeto TrackTrash foi inicialmente desenvolvido em equipe durante o hackathon Low Hack, promovido pelo Hackathon Brasil em parceria com a Siemens, com foco no tema de sustentabilidade e gestão de resíduos eletrônicos.
+
+A solução original foi concebida e implementada em um período de 48 horas, utilizando ferramentas de low-code, como o Mendix.
+
+Posteriormente, com o consentimento dos integrantes da equipe 338, fiz a adaptação do projeto para Web3 e o aprimoramento dos contratos inteligentes.
+
+Para contato com os demais membros da equipe ou acesso aos respectivos perfis profissionais (LinkedIn), solicita-se contato prévio direto comigo, para que as informações sejam compartilhadas de forma organizada.
 
 ## O problema que resolvemos
 
@@ -286,13 +295,3 @@ Os contratos inteligentes do protocolo TrackTrash foram submetidos a uma anális
 ## Licença
 
 Este projeto foi desenvolvido para fins educacionais em hackathon e capacitação Web3.
-
-### NOTA:
-
-O projeto TrackTrash foi inicialmente desenvolvido em equipe durante o hackathon Low Hack, promovido pelo Hackathon Brasil em parceria com a Siemens, com foco no tema de sustentabilidade e gestão de resíduos eletrônicos.
-
-A solução original foi concebida e implementada em um período de 48 horas, utilizando ferramentas de low-code, como o Mendix.
-
-Posteriormente, com o consentimento dos integrantes da equipe 338, fiz a adaptação do projeto para Web3 e o aprimoramento dos contratos inteligentes.
-
-Para contato com os demais membros da equipe ou acesso aos respectivos perfis profissionais (LinkedIn), solicita-se contato prévio direto comigo, para que as informações sejam compartilhadas de forma organizada.
