@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Web3Service } from "../../lib/Web3Service";
 import contractsData from "../../src/services/contracts.json";
 
@@ -30,22 +30,32 @@ export function Web3Provider({ children }) {
   const isWrongNetwork =
     Boolean(wallet) && currentChainId !== null && currentChainId !== EXPECTED_CHAIN_ID;
 
-  // ─── Detecta rede e eventos ──────────────────────────────────────────────
+  // ─── Detecta rede, restaura sessão e registra listeners ─────────────────
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
 
-    // Lê chainId inicial (passivo)
+    // Lê chainId inicial (passivo, sem popup)
     window.ethereum
       .request({ method: "eth_chainId" })
       .then((id) => setCurrentChainId(parseInt(id, 16)))
       .catch(() => {});
 
-    // Lê contas iniciais (passivo, sem popup)
+    // [FIX] Restaura sessão anterior: se o usuário já autorizou esta dApp,
+    // eth_accounts retorna as contas sem popup → restaura wallet + provider/signer.
     window.ethereum
       .request({ method: "eth_accounts" })
-      .then((accounts) => { if (!accounts?.length) setWallet(""); })
+      .then(async (accounts) => {
+        if (accounts?.length) {
+          setWallet(accounts[0]);
+          // Reconecta silenciosamente sem exibir popup
+          const { BrowserProvider } = await import("ethers");
+          web3.provider = new BrowserProvider(window.ethereum);
+          web3.signer   = await web3.provider.getSigner();
+        }
+      })
       .catch(() => {});
 
+    // ── Event listeners ──────────────────────────────────────────────────
     const onAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
         setWallet("");
@@ -60,7 +70,7 @@ export function Web3Provider({ children }) {
 
     const onChainChanged = (chainIdHex) => {
       setCurrentChainId(parseInt(chainIdHex, 16));
-      // Invalida provider/signer ao trocar de rede
+      // Invalida provider/signer — serão recriados na próxima transação
       web3.provider = null;
       web3.signer   = null;
     };
@@ -75,6 +85,7 @@ export function Web3Provider({ children }) {
     window.ethereum.on("accountsChanged", onAccountsChanged);
     window.ethereum.on("chainChanged",    onChainChanged);
     window.ethereum.on("disconnect",      onDisconnect);
+
     return () => {
       window.ethereum.removeListener("accountsChanged", onAccountsChanged);
       window.ethereum.removeListener("chainChanged",    onChainChanged);
@@ -82,13 +93,14 @@ export function Web3Provider({ children }) {
     };
   }, [web3]);
 
-  // ─── Troca para a rede correta ───────────────────────────────────────────
-  async function switchToCorrectNetwork() {
+  // ─── useCallback: evita recriar funções a cada render ───────────────────
+
+  /** Troca a rede do MetaMask para Sepolia via popup automático. */
+  const switchToCorrectNetwork = useCallback(async () => {
     try {
       await web3.ensureCorrectNetwork();
       const id = await window.ethereum.request({ method: "eth_chainId" });
       setCurrentChainId(parseInt(id, 16));
-      // Recria provider/signer após troca bem-sucedida
       const { BrowserProvider } = await import("ethers");
       web3.provider = new BrowserProvider(window.ethereum);
       web3.signer   = await web3.provider.getSigner();
@@ -96,10 +108,10 @@ export function Web3Provider({ children }) {
     } catch {
       setStatus("Troca de rede cancelada ou falhou.");
     }
-  }
+  }, [web3]);
 
-  // ─── Handler de conexão ──────────────────────────────────────────────────
-  async function handleConnect() {
+  /** Conecta a carteira (com popup de autorização). */
+  const handleConnect = useCallback(async () => {
     try {
       setConnecting(true);
       setStatus("Aguardando autorização da carteira…");
@@ -113,7 +125,7 @@ export function Web3Provider({ children }) {
     } finally {
       setConnecting(false);
     }
-  }
+  }, [web3]);
 
   return (
     <Web3Context.Provider

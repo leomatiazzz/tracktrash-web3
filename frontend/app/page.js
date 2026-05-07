@@ -14,6 +14,7 @@ export default function LogisticsPage() {
   const [feeInEth,        setFeeInEth]        = useState("0.002");
   const [achievementType, setAchievementType] = useState("Primeira Reciclagem");
   const [impactScore,     setImpactScore]     = useState("100");
+  const [isLoading,       setIsLoading]       = useState(false);
 
   async function handleRegisterAndMint() {
     const fee = parseFloat(feeInEth);
@@ -26,6 +27,7 @@ export default function LogisticsPage() {
       return;
     }
     try {
+      setIsLoading(true);
       setStatus("Registrando devolução e mintando NFT…");
       const result = await web3.registerReturnAndMintBadge({
         itemId,
@@ -38,6 +40,8 @@ export default function LogisticsPage() {
       setStatus(`Sucesso! Tx: ${result.returnTxHash.slice(0, 18)}…`);
     } catch (err) {
       setStatus(`Erro na devolução/NFT: ${parseWeb3Error(err)}`);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -55,6 +59,7 @@ export default function LogisticsPage() {
         impactScore={impactScore}         setImpactScore={setImpactScore}
         onRegisterAndMint={handleRegisterAndMint}
         wallet={wallet}
+        isLoading={isLoading}
       />
     </>
   );

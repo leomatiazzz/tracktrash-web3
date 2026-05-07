@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "Segoe UI", "system-ui", "sans-serif"],
+        // Lê a CSS variable injetada pelo next/font/google no layout.js
+        sans: ["var(--font-inter)", "Segoe UI", "system-ui", "sans-serif"],
       },
       colors: {
         forest: {
